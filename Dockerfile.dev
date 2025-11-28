@@ -1,0 +1,20 @@
+FROM rust:1-bookworm
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    pkg-config libssl-dev libpq-dev ca-certificates && \
+    rm -rf /var/lib/apt/lists/*
+
+# Pre-install cargo-watch for hot reloads
+RUN cargo install cargo-watch
+
+WORKDIR /app
+
+COPY Cargo.toml Cargo.toml
+COPY Cargo.lock* Cargo.lock
+
+RUN mkdir -p src && echo "fn main() {}" > src/main.rs
+RUN cargo fetch
+
+EXPOSE 8080
+
+CMD ["cargo", "watch", "-x", "run"]

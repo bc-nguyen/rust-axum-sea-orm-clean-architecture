@@ -1,0 +1,39 @@
+# https://taskfile.dev
+
+version: '3'
+
+dotenv: [ '.env.local' ]
+
+tasks:
+  migrate:add:
+    desc: add new migrate file
+    cmds:
+    - sea-orm-cli migrate generate {{.CLI_ARGS}}
+  migrate:run:
+    desc: Runs all pending migrations
+    cmds:
+    - sea-orm-cli migrate up --database-url=$DB_CONNECT_STR
+
+  entity:generate:
+    desc: generate entities
+    cmds:
+    - sea-orm-cli generate entity --database-url=$DB_CONNECT_STR --output-dir src/infrastructure/db/entities
+
+  local:start:
+    desc: start on local pc
+    cmds:
+    - podman compose up -d db
+    - cargo watch -x run
+
+  ut:run:
+    desc: execute unit test
+    cmds:
+    - cargo test
+  ut:cov:
+    desc: execute unit test with coverage report
+    cmds:
+    - cargo llvm-cov --ignore-filename-regex 'migration/*|db/*|cmd/*|dtos/*|repositories/*|error|use_case|handlers|response|trace|config|http|middlewares|lib'
+  ut:cov-html:
+    desc: execute unit test with coverage report
+    cmds:
+    - cargo llvm-cov --open --ignore-filename-regex 'migration/*|db/*|cmd/*|dtos/*|repositories/*|error|use_case|handlers|response|trace|config|http|middlewares|lib'
