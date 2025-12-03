@@ -25,9 +25,14 @@ services:
       context: .
       dockerfile: Dockerfile.dev
     working_dir: /app
-    env_file: .env
+    env_file: .env.dev
     volumes:
-      - ./:/app
+      - ./src:/app/src
+      - ./migration:/app/migration
+      - ./Cargo.toml:/app/Cargo.toml
+      - ./Cargo.lock:/app/Cargo.lock
+      - cargo-cache:/usr/local/cargo/registry
+      - target-cache:/app/target
     depends_on:
       db:
         condition: service_healthy
@@ -38,6 +43,8 @@ services:
 
 volumes:
   db:
+  cargo-cache:
+  target-cache:
 
 networks:
   demo-network:

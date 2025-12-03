@@ -22,8 +22,8 @@ tasks:
   local:start:
     desc: start on local pc
     cmds:
-    - podman compose up -d db
-    - cargo watch -x run
+    - podman compose up -d --build db app
+    - podman compose logs -f app
 
   ut:run:
     desc: execute unit test
